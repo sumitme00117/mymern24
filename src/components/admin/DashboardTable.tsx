@@ -1,5 +1,3 @@
-
-
 import { Column } from "react-table";
 import TableHOC from "./TableHOC";
 
