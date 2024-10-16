@@ -1,3 +1,5 @@
+
+
 import { MdError } from "react-icons/md"
 const NotFound = () => {
   return (
