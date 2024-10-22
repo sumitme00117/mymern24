@@ -28,6 +28,7 @@ const Linecharts = () => {
   }
 
   return (
+    <>
     <div className="admin-container">
       <AdminSidebar />
       <main className="chart-container">
@@ -84,6 +85,7 @@ const Linecharts = () => {
         )}
       </main>
     </div>
+    </>
   );
 };
 
