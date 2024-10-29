@@ -1,12 +1,14 @@
+
 import { configureStore } from "@reduxjs/toolkit";
+import { productAPI } from "./api/productAPI";
 import { userAPI } from "./api/userAPI";
 import { userReducer } from "./reducer/userReducer";
-import { productAPI } from "./api/productAPI";
 import { cartReducer } from "./reducer/cartReducer";
 import { orderApi } from "./api/orderAPI";
 import { dashboardApi } from "./api/dashboardAPI";
 
 export const server = import.meta.env.VITE_SERVER;
+
 export const store = configureStore({
   reducer: {
     [userAPI.reducerPath]: userAPI.reducer,
@@ -16,14 +18,13 @@ export const store = configureStore({
     [userReducer.name]: userReducer.reducer,
     [cartReducer.name]: cartReducer.reducer,
   },
-  //   middleware: (mid) => [...mid(), userAPI.middleware],
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(
-      userAPI.middleware,
-      productAPI.middleware,
-      orderApi.middleware,
-      dashboardApi.middleware,
-    ),
+  middleware: (mid) => [
+    ...mid(),
+    userAPI.middleware,
+    productAPI.middleware,
+    orderApi.middleware,
+    dashboardApi.middleware,
+  ],
 });
 
 export type RootState = ReturnType<typeof store.getState>;
