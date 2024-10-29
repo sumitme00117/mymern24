@@ -1,3 +1,5 @@
+
+
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserReducerInitialState } from "../../types/reducer-types";
 import { User } from "../../types/types";
@@ -12,13 +14,14 @@ export const userReducer = createSlice({
   initialState,
   reducers: {
     userExist: (state, action: PayloadAction<User>) => {
-      (state.loading = false), (state.user = action.payload);
+      state.loading = false;
+      state.user = action.payload;
     },
     userNotExist: (state) => {
-        state.loading = false,
-        state.user = null
-    }
+      state.loading = false;
+      state.user = null;
+    },
   },
 });
 
-export const {userExist, userNotExist} = userReducer.actions
+export const { userExist, userNotExist } = userReducer.actions;
