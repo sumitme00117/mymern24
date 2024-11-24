@@ -1,4 +1,17 @@
-import { Bar, CartItem, Line, Order, Pie, Product, ShippingInfo, Stats, User } from "./types";
+
+import {
+  Bar,
+  CartItem,
+  CouponType,
+  Line,
+  Order,
+  Pie,
+  Product,
+  Review,
+  ShippingInfo,
+  Stats,
+  User,
+} from "./types";
 
 export type CustomError = {
   status: number;
@@ -7,6 +20,7 @@ export type CustomError = {
     success: boolean;
   };
 };
+
 export type MessageResponse = {
   success: boolean;
   message: string;
@@ -26,7 +40,10 @@ export type AllProductsResponse = {
   success: boolean;
   products: Product[];
 };
-
+export type AllReviewsResponse = {
+  success: boolean;
+  reviews: Review[];
+};
 export type CategoriesResponse = {
   success: boolean;
   categories: string[];
@@ -35,7 +52,13 @@ export type CategoriesResponse = {
 export type SearchProductsResponse = AllProductsResponse & {
   totalPage: number;
 };
-
+export type SearchProductsRequest = {
+  price: number;
+  page: number;
+  category: string;
+  search: string;
+  sort: string;
+};
 export type ProductResponse = {
   success: boolean;
   product: Product;
@@ -45,8 +68,7 @@ export type AllOrdersResponse = {
   success: boolean;
   orders: Order[];
 };
-
-export type orderDetailsResponse = {
+export type OrderDetailsResponse = {
   success: boolean;
   order: Order;
 };
@@ -71,16 +93,17 @@ export type LineResponse = {
   charts: Line;
 };
 
-
-export type SearchProductsRequest = {
-  price: number;
-  page: number;
-  category: string;
-  search: string;
-  sort: string;
+export type NewReviewRequest = {
+  rating: number;
+  comment: string;
+  userId?: string;
+  productId: string;
 };
 
-
+export type DeleteReviewRequest = {
+  userId?: string;
+  reviewId: string;
+};
 
 export type NewProductRequest = {
   id: string;
@@ -92,7 +115,6 @@ export type UpdateProductRequest = {
   productId: string;
   formData: FormData;
 };
-
 export type DeleteProductRequest = {
   userId: string;
   productId: string;
@@ -107,10 +129,7 @@ export type NewOrderRequest = {
   discount: number;
   total: number;
   user: string;
-  
 };
-
-
 
 export type UpdateOrderRequest = {
   userId: string;
@@ -118,6 +137,16 @@ export type UpdateOrderRequest = {
 };
 
 export type DeleteUserRequest = {
-  userId: string,
-  adminUserId: string,
-}
+  userId: string;
+  adminUserId: string;
+};
+
+export type AllDiscountResponse = {
+  success: boolean;
+  coupons: CouponType[];
+};
+
+export type SingleDiscountResponse = {
+  success: boolean;
+  coupon: CouponType;
+};
