@@ -1,3 +1,5 @@
+
+
 import { CartItem, ShippingInfo, User } from "./types";
 
 export interface UserReducerInitialState {
@@ -14,4 +16,5 @@ export interface CartReducerInitialState {
   discount: number;
   total: number;
   shippingInfo: ShippingInfo;
+  coupon: string | undefined;
 }
