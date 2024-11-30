@@ -1,3 +1,5 @@
+
+
 import { redis, redisTTL } from "../app.js";
 import { TryCatch } from "../middlewares/error.js";
 import { Order } from "../models/order.js";
@@ -19,8 +21,8 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
   if (stats) stats = JSON.parse(stats);
   else {
     const today = new Date();
-    const sixMonthAgo = new Date();
-    sixMonthAgo.setMonth(sixMonthAgo.getMonth() - 6);
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const thisMonth = {
       start: new Date(today.getFullYear(), today.getMonth(), 1),
@@ -33,30 +35,52 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
     };
 
     const thisMonthProductsPromise = Product.find({
-      createdAt: { $gte: thisMonth.start, $lte: thisMonth.end },
+      createdAt: {
+        $gte: thisMonth.start,
+        $lte: thisMonth.end,
+      },
     });
 
     const lastMonthProductsPromise = Product.find({
-      createdAt: { $gte: lastMonth.start, $lte: lastMonth.end },
+      createdAt: {
+        $gte: lastMonth.start,
+        $lte: lastMonth.end,
+      },
     });
 
     const thisMonthUsersPromise = User.find({
-      createdAt: { $gte: thisMonth.start, $lte: thisMonth.end },
+      createdAt: {
+        $gte: thisMonth.start,
+        $lte: thisMonth.end,
+      },
     });
 
     const lastMonthUsersPromise = User.find({
-      createdAt: { $gte: lastMonth.start, $lte: lastMonth.end },
+      createdAt: {
+        $gte: lastMonth.start,
+        $lte: lastMonth.end,
+      },
     });
+
     const thisMonthOrdersPromise = Order.find({
-      createdAt: { $gte: thisMonth.start, $lte: thisMonth.end },
+      createdAt: {
+        $gte: thisMonth.start,
+        $lte: thisMonth.end,
+      },
     });
 
     const lastMonthOrdersPromise = Order.find({
-      createdAt: { $gte: lastMonth.start, $lte: lastMonth.end },
+      createdAt: {
+        $gte: lastMonth.start,
+        $lte: lastMonth.end,
+      },
     });
 
     const lastSixMonthOrdersPromise = Order.find({
-      createdAt: { $gte: sixMonthAgo, $lte: today },
+      createdAt: {
+        $gte: sixMonthsAgo,
+        $lte: today,
+      },
     });
 
     const latestTransactionsPromise = Order.find({})
@@ -97,6 +121,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
       (total, order) => total + (order.total || 0),
       0
     );
+
     const lastMonthRevenue = lastMonthOrders.reduce(
       (total, order) => total + (order.total || 0),
       0
@@ -128,7 +153,7 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
     };
 
     const orderMonthCounts = new Array(6).fill(0);
-    const orderMonthlyRevenue = new Array(6).fill(0);
+    const orderMonthyRevenue = new Array(6).fill(0);
 
     lastSixMonthOrders.forEach((order) => {
       const creationDate = order.createdAt;
@@ -136,11 +161,14 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
 
       if (monthDiff < 6) {
         orderMonthCounts[6 - monthDiff - 1] += 1;
-        orderMonthlyRevenue[6 - monthDiff - 1] += order.total;
+        orderMonthyRevenue[6 - monthDiff - 1] += order.total;
       }
     });
 
-    const categoryCount = await getInventories({ categories, productsCount });
+    const categoryCount = await getInventories({
+      categories,
+      productsCount,
+    });
 
     const userRatio = {
       male: usersCount - femaleUsersCount,
@@ -154,13 +182,14 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
       quantity: i.orderItems.length,
       status: i.status,
     }));
+
     stats = {
       categoryCount,
       changePercent,
       count,
       chart: {
         order: orderMonthCounts,
-        revenue: orderMonthlyRevenue,
+        revenue: orderMonthyRevenue,
       },
       userRatio,
       latestTransaction: modifiedLatestTransaction,
@@ -177,7 +206,6 @@ export const getDashboardStats = TryCatch(async (req, res, next) => {
 
 export const getPieCharts = TryCatch(async (req, res, next) => {
   let charts;
-
   const key = "admin-pie-charts";
 
   charts = await redis.get(key);
@@ -191,6 +219,7 @@ export const getPieCharts = TryCatch(async (req, res, next) => {
       "tax",
       "shippingCharges",
     ]);
+
     const [
       processingOrder,
       shippedOrder,
@@ -226,7 +255,7 @@ export const getPieCharts = TryCatch(async (req, res, next) => {
       productsCount,
     });
 
-    const stockAvailability = {
+    const stockAvailablity = {
       inStock: productsCount - outOfStock,
       outOfStock,
     };
@@ -235,6 +264,7 @@ export const getPieCharts = TryCatch(async (req, res, next) => {
       (prev, order) => prev + (order.total || 0),
       0
     );
+
     const discount = allOrders.reduce(
       (prev, order) => prev + (order.discount || 0),
       0
@@ -274,21 +304,23 @@ export const getPieCharts = TryCatch(async (req, res, next) => {
     charts = {
       orderFullfillment,
       productCategories,
-      stockAvailability,
+      stockAvailablity,
       revenueDistribution,
       usersAgeGroup,
       adminCustomer,
     };
+
     await redis.setex(key, redisTTL, JSON.stringify(charts));
   }
+
   return res.status(200).json({
     success: true,
     charts,
   });
 });
+
 export const getBarCharts = TryCatch(async (req, res, next) => {
   let charts;
-
   const key = "admin-bar-charts";
 
   charts = await redis.get(key);
@@ -309,12 +341,14 @@ export const getBarCharts = TryCatch(async (req, res, next) => {
         $lte: today,
       },
     }).select("createdAt");
+
     const sixMonthUsersPromise = User.find({
       createdAt: {
         $gte: sixMonthsAgo,
         $lte: today,
       },
     }).select("createdAt");
+
     const twelveMonthOrdersPromise = Order.find({
       createdAt: {
         $gte: twelveMonthsAgo,
@@ -340,14 +374,15 @@ export const getBarCharts = TryCatch(async (req, res, next) => {
 
     await redis.setex(key, redisTTL, JSON.stringify(charts));
   }
+
   return res.status(200).json({
     success: true,
     charts,
   });
 });
+
 export const getLineCharts = TryCatch(async (req, res, next) => {
   let charts;
-
   const key = "admin-line-charts";
 
   charts = await redis.get(key);
@@ -374,18 +409,29 @@ export const getLineCharts = TryCatch(async (req, res, next) => {
 
     const productCounts = getChartData({ length: 12, today, docArr: products });
     const usersCounts = getChartData({ length: 12, today, docArr: users });
-    const discount = getChartData({ length: 12, today, docArr: orders, property: "discount" });
-    const revenue = getChartData({ length: 12, today, docArr: orders, property: "total" });
+    const discount = getChartData({
+      length: 12,
+      today,
+      docArr: orders,
+      property: "discount",
+    });
+    const revenue = getChartData({
+      length: 12,
+      today,
+      docArr: orders,
+      property: "total",
+    });
 
     charts = {
       users: usersCounts,
       products: productCounts,
       discount,
-      revenue
+      revenue,
     };
 
     await redis.setex(key, redisTTL, JSON.stringify(charts));
   }
+
   return res.status(200).json({
     success: true,
     charts,
