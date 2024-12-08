@@ -1,10 +1,12 @@
+
+
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Please enter name"],
+      required: [true, "Please enter Name"],
     },
     photos: [
       {
@@ -20,19 +22,36 @@ const schema = new mongoose.Schema(
     ],
     price: {
       type: Number,
-      required: [true, "Please add Price"],
+      required: [true, "Please enter Price"],
     },
     stock: {
       type: Number,
-      required: [true, "Please add stock"],
+      required: [true, "Please enter Stock"],
     },
     category: {
       type: String,
-      required: [true, "Please enter product category"],
+      required: [true, "Please enter Category"],
       trim: true,
     },
+
+    description: {
+      type: String,
+      required: [true, "Please enter Description"],
+    },
+
+    ratings: {
+      type: Number,
+      default: 0,
+    },
+
+    numOfReviews: {
+      type: Number,
+      default: 0,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export const Product = mongoose.model("Product", schema);
