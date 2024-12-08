@@ -1,3 +1,5 @@
+
+
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema(
@@ -24,11 +26,13 @@ const schema = new mongoose.Schema(
         required: true,
       },
     },
+
     user: {
       type: String,
       ref: "User",
       required: true,
     },
+
     subtotal: {
       type: Number,
       required: true,
@@ -40,12 +44,10 @@ const schema = new mongoose.Schema(
     shippingCharges: {
       type: Number,
       required: true,
-      default: 0
     },
     discount: {
       type: Number,
       required: true,
-      default: 0
     },
     total: {
       type: Number,
@@ -56,6 +58,7 @@ const schema = new mongoose.Schema(
       enum: ["Processing", "Shipped", "Delivered"],
       default: "Processing",
     },
+
     orderItems: [
       {
         name: String,
@@ -69,7 +72,9 @@ const schema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 export const Order = mongoose.model("Order", schema);
