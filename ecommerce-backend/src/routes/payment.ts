@@ -1,18 +1,36 @@
+
+
 import express from "express";
 import { adminOnly } from "../middlewares/auth.js";
-import { allCoupons, applyDiscount, createPaymentIntent, deleteCoupon, newCoupon } from "../controllers/payment.js";
+import {
+  allCoupons,
+  applyDiscount,
+  createPaymentIntent,
+  deleteCoupon,
+  getCoupon,
+  newCoupon,
+  updateCoupon,
+} from "../controllers/payment.js";
 
-const app = express.Router()
+const app = express.Router();
 
-// route - /api/v1/payment/
+// route - /api/v1/payment/create
+app.post("/create", createPaymentIntent);
 
-app.post("/create", createPaymentIntent)
-app.post("/coupon/new", adminOnly, newCoupon)
-app.get("/discount", applyDiscount)
-app.get("/coupon/all", adminOnly, allCoupons)
-app.delete("/coupon/:id", adminOnly, deleteCoupon)
+// route - /api/v1/payment/coupon/new
+app.get("/discount", applyDiscount);
 
+// route - /api/v1/payment/coupon/new
+app.post("/coupon/new", adminOnly, newCoupon);
 
+// route - /api/v1/payment/coupon/all
+app.get("/coupon/all", adminOnly, allCoupons);
 
+// route - /api/v1/payment/coupon/:id
+app
+  .route("/coupon/:id")
+  .get(adminOnly, getCoupon)
+  .put(adminOnly, updateCoupon)
+  .delete(adminOnly, deleteCoupon);
 
-export default app
+export default app;
